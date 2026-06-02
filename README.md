@@ -38,24 +38,22 @@ MetricGuard/
 Due to file size limits, binary machine learning model weights are ignored from version control (Git). 
 
 > [!IMPORTANT]
-> Download the pre-trained models and scalers from the Google Drive link below, and place all 5 files directly in the `devops/models/` directory:
+> Download the pre-trained models and scalers from the Google Drive link below, and place them inside the respective subfolders within `devops/models/`:
 > 
-> 👉 **[Download MetricGuard ML Models (Google Drive Link Placeholder)] https://drive.google.com/drive/folders/1tqSjdgNn7fHwVl4YJHjdnZwWyd2xUHLK?usp=sharing **
+> 👉 **[Download MetricGuard ML Models (Google Drive Link)] https://drive.google.com/drive/folders/1tqSjdgNn7fHwVl4YJHjdnZwWyd2xUHLK?usp=sharing **
 
-### Required Model Files:
+### Required Model Files & Subdirectories:
 
-| Filename | Type | Description |
-|----------|------|-------------|
-| `isolation_forest_model.pkl` | Joblib Pickle | Trained Isolation Forest estimator |
-| `scaler.pkl` | Joblib Pickle | `StandardScaler` for Isolation Forest features |
-| `scaler.save` | Joblib Pickle | `MinMaxScaler` for scaling LSTM CPU features |
-| `threshold.save` | Joblib Pickle | Float reconstruction threshold value for LSTM |
-| `lstm_autoencoder.weights.h5` | Keras H5 | Layer weights for the 4-layer LSTM Autoencoder |
+#### 1. Isolation Forest Model (in `devops/models/isolation_forest/`)
+* `isolation_forest_model.pkl`: Trained Isolation Forest estimator.
+* `scaler.pkl`: `StandardScaler` for scaling Isolation Forest features (response time, CPU usage %, virtual memory used MB).
 
-### Recreating the LSTM Model Architecture
-The weights in `lstm_autoencoder.weights.h5` expect a specific nested Sequential model topology built as:
-* **Encoder**: `Sequential([LSTM(128, return_sequences=True), LSTM(64, return_sequences=False)])`
-* **Decoder**: `Sequential([RepeatVector(10), LSTM(64, return_sequences=True), LSTM(128, return_sequences=True), TimeDistributed(Dense(1))])`
+#### 2. Multivariate Autoencoder Model (in `devops/models/encoder/`)
+* `metricguard_phase4.h5`: Trained Keras Multivariate Autoencoder model (used for sequence-based anomaly detection and Root Cause Analysis).
+* `bitbrains_scaler.pkl`: `MinMaxScaler` for scaling the 9 features utilized by the Multivariate Autoencoder.
+
+> [!NOTE]
+> The Multivariate Autoencoder is loaded directly using `tf.keras.models.load_model(..., compile=False)`. Rebuilding the architecture programmatically is not required.
 
 ---
 

@@ -52,6 +52,7 @@ class AnomalyBase(BaseModel):
     root_cause: Optional[str] = None
     severity: str
     detected_by: str
+    ml_model_version: Optional[str] = None
 
 class AnomalyCreate(AnomalyBase):
     pass
@@ -60,3 +61,40 @@ class AnomalyResponse(AnomalyBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# ==========================================
+# ML PIPELINE SCHEMAS
+# ==========================================
+
+class MLPredictionRequest(MetricCollectorInput):
+    """
+    Input schema for on-demand ML prediction, matching the metrics collector format.
+    """
+    pass
+
+class MLPredictionResponse(BaseModel):
+    """
+    Output schema for ML pipeline prediction and RCA results.
+    """
+    is_anomaly: bool
+    detected_by: str
+    severity: str
+    iso_prediction: int
+    iso_score: float
+    ae_mse: float
+    ae_anomaly: bool
+    ae_buffer_fill: int
+    ae_buffer_ready: bool
+    root_cause: Optional[str] = None
+    category_errors: Optional[dict[str, float]] = None
+    top_contributors: Optional[list[dict]] = None
+
+class RCAStatsResponse(BaseModel):
+    """
+    Output schema for aggregated Root Cause Analysis statistics.
+    """
+    total_anomalies: int
+    by_root_cause: dict[str, int]
+    by_severity: dict[str, int]
+

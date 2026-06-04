@@ -97,7 +97,8 @@ def insert_anomaly(db: Session, anomaly_in: AnomalyCreate) -> Anomaly:
             anomaly_score=anomaly_in.anomaly_score,
             root_cause=anomaly_in.root_cause,
             severity=anomaly_in.severity,
-            detected_by=anomaly_in.detected_by
+            detected_by=anomaly_in.detected_by,
+            ml_model_version=anomaly_in.ml_model_version,
         )
         db.add(db_anomaly)
         db.commit()
@@ -119,3 +120,41 @@ def get_anomalies(db: Session, limit: int = 100) -> list[Anomaly]:
     except Exception as e:
         logger.error("Failed to query anomalies from database: %s", e, exc_info=True)
         raise e
+
+
+def get_anomaly_stats(db: Session) -> dict:
+    """
+    Aggregate anomaly counts by root_cause and severity.
+    """
+    try:
+        from sqlalchemy import func
+        total = db.query(func.count(Anomaly.id)).scalar() or 0
+        
+        # Get counts by root cause
+        rc_results = db.query(Anomaly.root_cause, func.count(Anomaly.id)).group_by(Anomaly.root_cause).all()
+        by_root_cause = {rc or "unknown": count for rc, count in rc_results}
+        
+        # Get counts by severity
+        sev_results = db.query(Anomaly.severity, func.count(Anomaly.id)).group_by(Anomaly.severity).all()
+        by_severity = {sev: count for sev, count in sev_results}
+        
+        return {
+            "total_anomalies": total,
+            "by_root_cause": by_root_cause,
+            "by_severity": by_severity
+        }
+    except Exception as e:
+        logger.error("Failed to calculate anomaly stats: %s", e, exc_info=True)
+        raise e
+
+
+def get_recent_anomalies_by_type(db: Session, detected_by: str, limit: int = 100) -> list[Anomaly]:
+    """
+    Retrieve recent anomalies filtered by the detection method (e.g. isolation_forest, autoencoder).
+    """
+    try:
+        return db.query(Anomaly).filter(Anomaly.detected_by.like(f"%{detected_by}%")).order_by(desc(Anomaly.timestamp)).limit(limit).all()
+    except Exception as e:
+        logger.error("Failed to query anomalies by type: %s", e, exc_info=True)
+        raise e
+

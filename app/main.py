@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import engine, Base
-from app.routers import metrics, anomalies
+from app.routers import metrics, anomalies, ml
+from app.ml_service import get_ml_service
 
 # =========================================================
 # LOGGING CONFIGURATION
@@ -26,13 +27,23 @@ logger = logging.getLogger("metricguard")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    On startup: create database tables if they do not exist.
+    On startup: create database tables if they do not exist, and load ML models.
     On shutdown: dispose engine connections.
     """
     logger.info("MetricGuard backend starting up...")
     logger.info("Creating database tables if they do not exist...")
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables ready.")
+    
+    # Load ML models
+    logger.info("Initializing ML models...")
+    ml_service = get_ml_service()
+    success = ml_service.load_models()
+    if success:
+        logger.info("ML models loaded successfully at startup.")
+    else:
+        logger.error("ML models failed to load at startup: %s", ml_service.model_load_error)
+        
     yield
     logger.info("MetricGuard backend shutting down...")
     engine.dispose()
@@ -69,6 +80,7 @@ app.add_middleware(
 
 app.include_router(metrics.router)
 app.include_router(anomalies.router)
+app.include_router(ml.router)
 
 
 # =========================================================

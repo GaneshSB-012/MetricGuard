@@ -32,6 +32,7 @@ class Anomaly(Base):
     root_cause = Column(String(255), nullable=True)
     severity = Column(String(50), nullable=False)
     detected_by = Column(String(100), nullable=False)
+    ml_model_version = Column(String(50), nullable=True)
 
     def __repr__(self):
-        return f"<Anomaly(id={self.id}, timestamp={self.timestamp}, root_cause='{self.root_cause}', severity='{self.severity}')>"
+        return f"<Anomaly(id={self.id}, timestamp={self.timestamp}, root_cause='{self.root_cause}', severity='{self.severity}', ml_model_version='{self.ml_model_version}')>"

@@ -71,7 +71,8 @@ def test_service_layer():
             anomaly_score=0.985,
             root_cause="CPU Usage",
             severity="CRITICAL",
-            detected_by="SERVICE_TEST_SUITE"
+            detected_by="SERVICE_TEST_SUITE",
+            metric_id=inserted_metric.id
         )
         inserted_anomaly = insert_anomaly(db, anomaly_in)
         print(f"   -> Anomaly inserted (ID: {inserted_anomaly.id}).")

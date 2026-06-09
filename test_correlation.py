@@ -19,6 +19,10 @@ from sqlalchemy.exc import IntegrityError
 # Add workspace root to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+# Load dotenv first so real config takes precedence
+from dotenv import load_dotenv
+load_dotenv()
+
 # Set fallback env vars so app.database module-level validation passes
 # (tests use in-memory SQLite, these are never used for real connections)
 os.environ.setdefault("DB_HOST", "localhost")

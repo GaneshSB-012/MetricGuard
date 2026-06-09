@@ -41,10 +41,10 @@ async def lifespan(app: FastAPI):
     logger.info("Verifying database connection...")
     db = SessionLocal()
     is_connected = verify_db_connection(db)
-    db.close()
     
     if not is_connected:
         logger.critical("Database connection verification FAILED. Database is unavailable.")
+        db.close()
         raise SystemExit("Database connection failed. Application startup aborted.")
     
     logger.info("Database connection verified successfully.")
@@ -52,6 +52,16 @@ async def lifespan(app: FastAPI):
     logger.info("Creating database tables if they do not exist...")
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables ready.")
+
+    # Verify Correlation table existence
+    from sqlalchemy import inspect
+    inspector = inspect(engine)
+    if not inspector.has_table("correlations"):
+        logger.critical("Database correlation table 'correlations' is missing!")
+        db.close()
+        raise SystemExit("Database validation failed: 'correlations' table does not exist.")
+    logger.info("Database table 'correlations' existence verified.")
+    db.close()
     
     # Load ML models
     logger.info("Initializing ML models...")
@@ -60,12 +70,27 @@ async def lifespan(app: FastAPI):
     if success:
         logger.info("ML models loaded successfully at startup.")
     else:
-        logger.error("ML models failed to load at startup: %s", ml_service.model_load_error)
+        logger.critical("ML models failed to load at startup: %s", ml_service.model_load_error)
+        raise SystemExit(f"ML models loading failed: {ml_service.model_load_error}")
 
     # Initialize and load Log Anomaly ML model
-    logger.info("Initializing log anomaly detection models...")
+    import os
+    logger.info("Verifying log anomaly detection model files and vectorizer...")
     log_service = get_log_anomaly_service()
-    # LogAnomalyService loaded models inside get_log_anomaly_service() singleton initialization
+    
+    if not os.path.exists(log_service.model_path):
+        logger.critical("Log anomaly model file NOT found at: %s", log_service.model_path)
+        raise SystemExit(f"Log anomaly model file not found: {log_service.model_path}")
+        
+    if log_service.model is None:
+        logger.critical("Log anomaly model failed to load at startup!")
+        raise SystemExit("Log anomaly model load failed.")
+        
+    if log_service.vectorizer is None:
+        logger.critical("TF-IDF Vectorizer is not initialized!")
+        raise SystemExit("TF-IDF Vectorizer is missing/not initialized.")
+        
+    logger.info("Log anomaly detection model and vectorizer verified successfully.")
 
     # Start automated scheduler
     logger.info("Starting background correlation scheduler...")

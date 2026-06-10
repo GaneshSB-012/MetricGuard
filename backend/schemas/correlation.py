@@ -1,6 +1,6 @@
 """
 ==========================================================
-MetricGuard — Correlation Schemas  (schemas.py)
+MetricGuard — Correlation Schemas  (correlation.py)
 ==========================================================
 
 Phase 10: Metric-Log Correlation Engine

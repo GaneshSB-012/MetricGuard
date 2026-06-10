@@ -9,6 +9,7 @@ from app.database import engine, Base, SessionLocal, get_db, verify_db_connectio
 from app.routers import metrics, anomalies, ml, logs
 from backend.routes.correlation_routes import router as correlation_router  # Phase 10
 from backend.service_impact.routes import router as service_impact_router  # Phase 11
+from backend.routes.incident_routes import router as incident_router  # Phase 12
 from app.ml_service import get_ml_service
 from backend.jobs.correlation_scheduler import get_scheduler
 from backend.services.log_anomaly_service import get_log_anomaly_service
@@ -54,7 +55,7 @@ async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables ready.")
 
-    # Verify Correlation table existence
+    # Verify Correlation and Incident table existence
     from sqlalchemy import inspect
     inspector = inspect(engine)
     if not inspector.has_table("correlations"):
@@ -62,6 +63,12 @@ async def lifespan(app: FastAPI):
         db.close()
         raise SystemExit("Database validation failed: 'correlations' table does not exist.")
     logger.info("Database table 'correlations' existence verified.")
+    
+    if not inspector.has_table("incidents"):
+        logger.critical("Database incident table 'incidents' is missing!")
+        db.close()
+        raise SystemExit("Database validation failed: 'incidents' table does not exist.")
+    logger.info("Database table 'incidents' existence verified.")
     db.close()
     
     # Load ML models
@@ -143,6 +150,7 @@ app.include_router(ml.router)
 app.include_router(logs.router)
 app.include_router(correlation_router)  # Phase 10: Metric-Log Correlation Engine
 app.include_router(service_impact_router)  # Phase 11: Service Impact Analysis & Dependency Graph
+app.include_router(incident_router)  # Phase 12: Alert Prioritization & Incident Management
 
 
 # =========================================================

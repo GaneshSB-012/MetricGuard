@@ -20,15 +20,42 @@ PROJECT_ROOT = os.path.abspath(
     os.path.join(BASE_DIR, "..")
 )
 
-# backend/.env
-ENV_PATH = os.path.join(
-    PROJECT_ROOT,
-    "backend",
-    ".env"
-)
+def find_and_load_dotenv():
+    """
+    Search for .env file in multiple possible locations:
+    1. backend/.env (project structure fallback)
+    2. Project root .env (MetricGuard/.env)
+    3. Current working directory .env (os.getcwd()/.env)
+    4. Recursively searching upwards from BASE_DIR
+    """
+    candidates = [
+        os.path.join(PROJECT_ROOT, "backend", ".env"),
+        os.path.join(PROJECT_ROOT, ".env"),
+        os.path.join(os.getcwd(), ".env"),
+    ]
+    
+    # Add upward search paths
+    current_dir = BASE_DIR
+    while True:
+        candidates.append(os.path.join(current_dir, ".env"))
+        parent_dir = os.path.dirname(current_dir)
+        if parent_dir == current_dir:
+            break
+        current_dir = parent_dir
+        
+    for path in candidates:
+        if os.path.exists(path):
+            load_dotenv(path)
+            # Check if required variables are loaded
+            if os.getenv("DB_HOST") and (os.getenv("DB_USER") or os.getenv("DB_USERNAME")) and os.getenv("DB_PASSWORD"):
+                return path
+                
+    # Fallback to standard dotenv loading
+    load_dotenv()
+    return None
 
-# Load backend environment variables
-load_dotenv(ENV_PATH)
+find_and_load_dotenv()
+
 
 
 # ==========================================================

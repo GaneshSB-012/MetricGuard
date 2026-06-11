@@ -1,0 +1,210 @@
+{
+  "Database Timeout": {
+    "description": "Database response latency exceeds threshold",
+    "recommendations": [
+      "Check database connectivity",
+      "Verify connection pool settings",
+      "Review slow queries"
+    ]
+  },
+  "Database Bottleneck": {
+    "description": "Database queries are executing slowly or blocking system operations",
+    "recommendations": [
+      "Check database connectivity",
+      "Verify connection pool settings",
+      "Review slow queries"
+    ]
+  },
+  "Database Connectivity Issue": {
+    "description": "Failed to connect to the database server",
+    "recommendations": [
+      "Verify network connection to DB port",
+      "Check database listener status",
+      "Inspect database user authorization credentials"
+    ]
+  },
+  "Database Deadlock": {
+    "description": "Simultaneous database transactions blocking each other",
+    "recommendations": [
+      "Analyze transaction locks and queries",
+      "Review application transaction boundaries",
+      "Verify retry logic on deadlock exception"
+    ]
+  },
+  "Database Replication Issue": {
+    "description": "Replication delay or failure between master and replica database nodes",
+    "recommendations": [
+      "Check replication lag metrics",
+      "Verify replica node sync status",
+      "Check network connectivity between master and replicas"
+    ]
+  },
+  "Connection Pool Exhaustion": {
+    "description": "All available database connection pool connections are currently in use",
+    "recommendations": [
+      "Increase database connection pool size",
+      "Verify connection leak detection is active",
+      "Optimize query speed to release connections faster"
+    ]
+  },
+  "High CPU Usage": {
+    "description": "High CPU utilization detected on host or container",
+    "recommendations": [
+      "Identify top CPU-consuming processes",
+      "Review recent deployments",
+      "Scale application instances"
+    ]
+  },
+  "CPU Saturation": {
+    "description": "CPU cores are fully utilized, causing process queue delays",
+    "recommendations": [
+      "Identify top CPU-consuming processes",
+      "Review recent deployments",
+      "Scale application instances"
+    ]
+  },
+  "CPU Usage": {
+    "description": "CPU utilisation is exceeding configured warning threshold",
+    "recommendations": [
+      "Identify top CPU-consuming processes",
+      "Review recent deployments",
+      "Scale application instances"
+    ]
+  },
+  "Memory Leak": {
+    "description": "Persistent memory growth indicates resource leakage",
+    "recommendations": [
+      "Inspect memory consumption",
+      "Analyze heap usage",
+      "Restart affected service"
+    ]
+  },
+  "Memory Exhaustion": {
+    "description": "The operating system or container run out of memory (OOM)",
+    "recommendations": [
+      "Inspect memory consumption",
+      "Analyze heap usage",
+      "Restart affected service"
+    ]
+  },
+  "Memory Usage": {
+    "description": "Memory utilisation is exceeding warning thresholds",
+    "recommendations": [
+      "Inspect memory consumption",
+      "Analyze heap usage",
+      "Restart affected service"
+    ]
+  },
+  "JVM Memory Pressure": {
+    "description": "JVM GC overhead limit exceeded or running low on memory space",
+    "recommendations": [
+      "Check JVM heap allocation",
+      "Inspect garbage collection frequency and logs",
+      "Analyze memory dump for leaks"
+    ]
+  },
+  "Disk Failure": {
+    "description": "Disk hardware degradation or total write failure",
+    "recommendations": [
+      "Check disk SMART status",
+      "Replace failing disk",
+      "Verify backup availability"
+    ]
+  },
+  "Disk Saturation": {
+    "description": "File system disk space or inode availability is full",
+    "recommendations": [
+      "Free up disk space (truncate logs, clear temporary directories)",
+      "Check disk read/write throughput and IOPS limits",
+      "Scale disk storage capacity"
+    ]
+  },
+  "Disk Usage": {
+    "description": "Disk storage usage exceeds recommended thresholds",
+    "recommendations": [
+      "Free up disk space (truncate logs, clear temporary directories)",
+      "Check disk read/write throughput and IOPS limits",
+      "Scale disk storage capacity"
+    ]
+  },
+  "Network Congestion": {
+    "description": "Network bandwidth saturation or high transmission drop rates",
+    "recommendations": [
+      "Inspect network traffic",
+      "Check packet loss",
+      "Review bandwidth utilization"
+    ]
+  },
+  "Network Latency Issue": {
+    "description": "High round-trip-time latency or TCP connection timeouts",
+    "recommendations": [
+      "Inspect network traffic",
+      "Check packet loss",
+      "Review bandwidth utilization"
+    ]
+  },
+  "Network Usage": {
+    "description": "Network interface usage exceeds safety margins",
+    "recommendations": [
+      "Inspect network traffic",
+      "Check packet loss",
+      "Review bandwidth utilization"
+    ]
+  },
+  "Service Failure": {
+    "description": "Application service is failing or unresponsive to requests",
+    "recommendations": [
+      "Restart affected service",
+      "Check application logs for errors",
+      "Inspect upstream/downstream dependencies health"
+    ]
+  },
+  "Upstream Service Failure": {
+    "description": "Downstream service failed because an upstream dependency returned errors",
+    "recommendations": [
+      "Check status of upstream API endpoints",
+      "Verify API credentials and configurations",
+      "Verify circuit breakers status"
+    ]
+  },
+  "SSL/TLS Certificate Issue": {
+    "description": "Secure socket layer certificate is expired, self-signed, or invalid",
+    "recommendations": [
+      "Verify certificate expiration date",
+      "Renew SSL certificate with authority",
+      "Check server certificate configurations"
+    ]
+  },
+  "Rate Limiting Active": {
+    "description": "System requests throttled due to exceeding API rate limits",
+    "recommendations": [
+      "Implement client request backoff/retries",
+      "Inspect client API usage rates",
+      "Increase rate limit thresholds"
+    ]
+  },
+  "pending_buffer_fill": {
+    "description": "Pending requests/buffer fill rates are growing excessively",
+    "recommendations": [
+      "Inspect request processing throughput",
+      "Review consumer thread configurations",
+      "Scale message consumer instances"
+    ]
+  },
+  "Node Failure": {
+    "description": "Cluster node is offline, unreachable, or crashed",
+    "recommendations": [
+      "Check host system status and availability",
+      "Restart host server/node",
+      "Check cluster membership status"
+    ]
+  },
+  "Cluster Failure": {
+    "description": "Total cluster service outage or split-brain state",
+    "recommendations": [
+      "Verify leader election status",
+      "Check network connectivity between all nodes",
+      "Review cluster logs and consensus state"
+    ]
+  }
+}

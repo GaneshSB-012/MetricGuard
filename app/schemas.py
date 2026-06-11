@@ -134,10 +134,11 @@ class LogCreate(BaseModel):
     @field_validator("level")
     @classmethod
     def level_must_be_valid(cls, v: str) -> str:
-        allowed = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
+        allowed = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "UNKNOWN"}
         if v.upper() not in allowed:
             raise ValueError(f"level must be one of {allowed}, got '{v}'")
         return v.upper()
+
 
 
 class LogResponse(BaseModel):

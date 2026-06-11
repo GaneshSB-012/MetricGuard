@@ -14,7 +14,8 @@
 # ── Backend API ─────────────────────────────────────────────
 # URL where collected metrics are POSTed.
 # Change this when deploying to staging / production.
-backend_url: "http://backend:5000/metrics"
+backend_url: "http://localhost:8000/metrics"
+
 
 
 # ── Collection ──────────────────────────────────────────────
@@ -78,4 +79,4 @@ log_watch_files:
 # (Optional) Explicit URL for the logs endpoint.
 # If omitted, the agent derives it from backend_url:
 #   http://backend:5000/metrics  →  http://backend:5000/logs
-logs_backend_url: "http://backend:5000/logs"
+logs_backend_url: "http://localhost:8000/logs"

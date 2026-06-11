@@ -23,7 +23,7 @@ _env_file = _project_root / ".env"
 if _env_file.exists():
     for key, value in dotenv_values(str(_env_file)).items():
         if value is not None:
-            os.environ.setdefault(key, value)
+            os.environ[key] = value
 
 # Now it is safe to import the app's database config and models.
 from app.database import DATABASE_URL, connect_args
